@@ -1,0 +1,458 @@
+RELEASE 0.2: Basic functionality
+	- large supply of problems for students to work on (partially due to random generation)
+	- problem sets for the first-semester ETH EE course (analog questions only)
+	QUESTION CONFIGURATION:
+		- choose random parameters
+		- let user specify their math knowledge to appropriately filter the questions
+	PROBLEM TYPES:
+		- phasor
+		- laplace
+		- fill-in-the-blank
+	PRINT FUNCTIONS:
+		- print view without solutions
+		- print view for solution sheet
+RELEASE 0.3: Data storage
+	- user accounts
+	- store question XML for problem sets which have been scored
+	- let users comment on questions and probsets
+	- history of scores
+	- new question type: essay
+RELEASE 0.4: Custom probsets
+	- let users construct their own problem sets
+	- let user specify custom problem sets as public or private?
+RELEASE 0.5: Custom questions
+	- let users create their own questions in XML or javascript
+	- let user specify?/edit?/add question text
+	- let user specify custom questions as public or private?
+	- permission model for editing custom questions and probsets?
+	- mechanism for private remote vaults?
+RELEASE 0.6: Instructor features
+	- specialized instructor functions
+	- let user generate a random code for a probset which can be used by students to access that probset
+	- let instructors see grades/answers to student probsets
+	- probset code contains display parameters and information such as whether the student can see his score, see the corrections
+	- create course pages
+	- let instructor import a list of students (with email addresses) to inform of probset codes, when probsets are available, when scores are available
+RELEASE 1.0: reduce barriers to classroom use
+	- support internet explorer
+	- let unregistered users solve instructor probsets
+	- let instructor export probset for latex or openoffice
+	- timed tests
+	- grading options to transform score -> grade, such as considering the "level" of questions answered, passed/incomplete
+RELEASE 1.1: Student features
+	- tracking of wrongly answered questions for students to create custom review probsets
+	- advanced construction of custom probsets by searching on keywords
+RELEASE 1.2: advanced probset features
+	- let probset codes also specify that the student can get a second/third/fourth try on wrong answers (perhaps timed)
+
+
+
+
+
+problem server:
+	return content of files
+	returns XML list of problems
+	returns XML of a problem
+
+probset server:
+	returns XML list of probsets
+	returns XML of a probset
+
+
+Shall we distinguish between external and internal problem repositories?
+If so, we could let external problem repositories return XML information, and internally they could handle the processing however they wanted.
+For the internal repository, we could let people make their own problems, and the only restrictions would be that they can only use a single script file per problem and that backup is more difficult.
+The drawback to having the main problem repository being external is that other people couldn't easily use the source-code as template/example for their own questions, for two reasons: 1) how would they see the source code, 2) the source code might not consist of simple scripts.
+
+
+Information we need to get back from the remote repository:
+	list of problems
+	list of probsets
+	ability to progressively get/set problem parameters
+	ability to retrieve info about random settings
+	XML/JSON of problem
+	ability to check answers if the answer isn't sent to the server in the XML
+
+
+Problem Parameters:
+	I'm having difficulty figuring out how to handle parameters, even for the simple series resistor network
+	these parameters overlap in some ways, and are thus giving me problems:
+		number of elements
+		symbolic/numeric
+		element values
+	it would be possible to define all three in one array.  It's length would give us the number of elements, and there could be special values for symbolic
+	elemValues: sym,sym,sym
+	elemValues: 10k,20k,30k
+	Randomly selecting values is also a challenge: 1) how do we specify which variables to choose random values for, and 3) what constraints are placed on the selection?
+	We have a couple choices for selecting random values: 1) specify how the selection should be done and let the main server do it, or 2) ask the problem template to do it
+	If we ask the problem template to select random values, then we send two lists: the current values, and a list of values to randomize
+	rand(uniform,elemValues[0],elemValues[1],elemValues[2])
+	
+	
+	a,((R1,b,R2)|R3),c
+	a+((R1+b+R2)|R3)+c
+	a ((R1 b R2)|R3) c
+	"a" (R1 R2)|R3 "b"
+	MOS1:gnd gnd; MOS:in va; MOS:out R1 V1; MOS:out 
+
+Problem and Question structures:
+	vault: may contain the solution
+	server: questions have the following additional fields:
+		user answer (via client)
+		points (assigned by probset)
+		level (assigned by probset)
+		correction marks (assigned by server)
+
+New Problem/Question structure:
+	The base class is "QuObject"
+	QuContainer subclasses:
+		QuContainer
+		QuText
+		QuProblem
+		QuProblemEE
+		QuQuestion
+		QuQuestionMathlib
+
+URL structure of website:
+	Requirements:
+		- site should be browseable by search engines
+		- site should be usable by users who aren't logged in (they can search and work problem sets, but no data needs to be saved)
+		- registered users store a history of questions/probsets they've worked
+		- when a registered user works a sheet, the underlying XML is stored, meaning that they need to access the XML in the database instead of from the vault
+		- nonetheless, the URL should be such that they can send the link to someone else, who can then work the same sheet for themselves
+	Challenge:
+		- how can we have compatible URLs for registered and non-registered users, where non-registered users are working from the vault, and registered users are working from the database?
+
+------------------------------------------
+COMPONENT DESCRIPTIONS:
+
+Matlib question:
+	answer modes: OneLinPerVariable, Multiline, Function
+		one variable, single-line answer
+		one variable, multi-line answer
+		a function that returns a single value
+		a function that returns multiple values
+		a set of variables, each one with a sigle-line answer
+		a set of variables, multi-line answer
+	for mode: a set of variables, each one with a single-line answer
+		show which input variables are initially given
+		let each variable use previously calculated values for its answer
+		let probset turn off certain variables in the set, so they don't get asked
+
+Question:
+	points
+	level (basic, standard, advanced)
+	description
+	type (matlib, multiple choice, definitions, prose, fill-in-the-blank)
+
+------------------------------------------
+Possible future stuff
+
+	server: implement the following "rewrite" urls to access vault questions
+		api-vault/
+			standard/
+				questions/
+					ThreeResistorCircuit(mode=RS)/
+						param-specs/
+						param-defaults/
+						param-fixup/
+						param-randomize/
+						permissions/
+						xml/
+						xml-and-params/
+		api-db/
+			standard/questions/ThreeResistorCircuit(mode=RS)/
+				answers/ (list of entries for answers to this question)
+					{id} (answers to this question in xml form) (GET, POST)
+		api-xhtml/ ???
+			...
+			questions/
+			history/
+		view/standard/questions/ThreeResistorCircuit(mode=RS)/
+		3	config
+		x	view
+		1	viewans
+		2	viewansscr
+			viewansscrsln
+		x	viewsln
+		x	work
+	xml: create a DTD for XML coming from vault-local
+	config
+		config-0
+			question types: list of question types to be posed (0=quantitative, 1=various ways, 3=KCL)
+		config-1
+			HEADING: "Quantitative #1" (one for each quantitative question)
+			find: variables to solve for
+			given: variables given
+			given values: the user can set specific values for the given variables here
+			HEADING: "Various Ways #1" (one for each quantitative question)
+			find: variable to solve for
+		config-question-to-show
+			list of indicies for questions to actually show
+	vault:
+		add an XML section for randomizer-specs
+		add an XML section for randomizer requests
+		handle randomizing commands in URI
+	server:
+		display randomizer-specs section
+		add button for [randomize]
+		add button for [reset]
+	
+	Page: user login
+	Page: user registration
+	Page: list of past and possible probsets
+	Page: instructor reviews results for a specific problem set
+	Page: instructor manages student list
+	Page: instructor manages probset list
+	circuit drawing for IE
+	save user's answers when he moves to different field
+	save user's answers after a certain time period?
+	save button for user's answers?
+	class codes so that a registered user can register for a class
+	restrict allowable matlib functions as appropriate
+	probset output as .odt (http://odftoolkit.org/projects/odftoolkit/pages/ODFDOM)
+	problems might have references back to prerequisite problems
+	ProbsetTemplate: group problems into groups, assign points to each possible question 
+	ProbsetTemplate: question selection criteria. e.g. select 1 of: 1.1.1, select 2 of: 1.1.2, 1.2.1, 1.2.2, select the the remaining questions in group 1 in order to reach 10 points
+	next to each question is an [More Info >>>] dialog
+		here the user can choose [Practice More Questions like this one], [Practice Prerequisites]  
+
+Database:
+	User answers:
+		probsetId
+		probsetUrl
+		probsetVersion
+		date
+		params
+
+Problem Templates:
+	Fields:
+		unique string ID (filename)
+		title
+		script language
+		script
+		author (email address?  user reference?)
+		public owner name
+		keywords (e.g. ee, math)
+			these can have subkeywords ("ee(DC series) math")
+		version
+		dates (create?, last modified?, version dates?)
+	Permissions:
+		usable (problems can be instantiated)
+		readable (script can be be viewed)
+		writable (script can be edited)
+		admins (those who can change the permissions)
+		Entities: public, individual email addresses, groups
+
+EditProblemPage:
+	TabWidget: "Problem List", "Problem View"
+	Problem List:
+		LEFT: categories
+			my email address
+			[list of email addresses of owners whose problems I've been given group/individual permission to access]
+			examples
+			public
+		CENTER:
+			[New]
+			[Save]
+			[Discard]
+			[Delete]
+			[Copy]
+			fields for editing scripts
+		BOTTOM:
+			script verification
+			parameter list
+			other helpful/relevant info?
+	Problem View:
+		BOTTOM:
+			problem view
+		LEFT:
+			problem script view
+		RIGHT:
+			parameter settings
+
+EditProbsetPage:
+	TabWidget: "Problem Set List", "Problem Set View"
+
+Probset IDs:
+	We have a set of probset templates from which users may choose
+	some templates are static, some have random components or a sets of params from which will be randomly chosen
+	In order to view a probset, we need to instantiate a concrete probset from the probset template
+
+General:
+	let user submit amount of time he needed
+	time how long the user needed (especially for quizzes?)
+	method for estimating time to complete the probset?
+	let user select a problem set
+	let user sign in
+	let user register?
+
+Problem Parameters:
+	How should random parameters be denoted?
+	How should specifications about random value generation be made?
+	Variables which don't have a default will be chosen randomly
+
+Possible additional question types:
+	for a specific "find" variable, various ways to calculate it
+	for a specific set of "given" variables, let user select the variables which can be found
+------------------------------------------
+
+
+Eclipse plugin install sites:
+	http://dl.google.com/eclipse/plugin/3.4
+	http://www.scala-lang.org/scala-eclipse-plugin
+	http://www.scala-lang.org/archives/downloads/distrib/files/scala-plugin-nightly/
+	http://m2eclipse.sonatype.org/update/
+	For ANTLR:
+		http://download.eclipse.org/technology/dltk/updates-dev/1.0 (install Core)
+		http://antlrv3ide.sourceforge.net/updates
+
+Latex to HTML programs
+	http://pagesperso-orange.fr/eric.chopin/latex/latex4web.htm (javascript, less complete)
+	http://hevea.inria.fr/ (OCaml)
+	http://hutchinson.belmont.ma.us/tth/tth-noncom/download.html (lex output in C)
+
+Website colors:
+	http://colorschemedesigner.com/#0I51Tw0w0w0w0
+CSS selector documentation:
+	http://www.w3.org/TR/CSS2/selector.html
+
+Maven2:
+	Command used to generate scala project "core":
+		mvn archetype:generate -DarchetypeGroupId=org.scala-tools.archetypes -DarchetypeArtifactId=scala-archetype-simple -DarchetypeVersion=1.2 -DremoteRepositories=http://scala-tools.org/repo-releases -DgroupId=net.ellisw.quvault -DartifactId=core
+	Command to compile (without tests) and start the local app server:
+		mvn -Dmaven.test.skip=true -D skipTests package && /home/ellis/tmp/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.2.1.v200905131143/appengine-java-sdk-1.2.1/bin/dev_appserver.sh server-lift/target/server-lift-0.0.1-SNAPSHOT
+	Commands to install qtjambi in the local maven repository:
+		- download file from website
+		- unpack it and change to the unpacked directory
+		mvn install:install-file -Dfile=qtjambi-4.5.0_01.jar -DgroupId=com.trolltech.qtjambiclasses -DartifactId=qtjambi -Dversion=4.5.0 -Dpackaging=jar
+		mvn install:install-file -Dfile=qtjambi-linux32-gcc-4.5.0_01.jar -DgroupId=com.trolltech.qtjambilinux32 -DartifactId=qtjambi -Dversion=4.5.0 -Dpackaging=jar
+		     <dependency>
+       <groupId>com.trolltech.qtjambiclasses</groupId>
+       <artifactId>qtjambi</artifactId>
+       <version>4.3.3</version>
+     </dependency>
+
+     <dependency>
+       <groupId>com.trolltech.qtjambiwin32gpl</groupId>
+       <artifactId>qtjambi</artifactId>
+       <version>4.3.3</version>
+     </dependency>
+	Continuous integration:
+		http://wiki.liftweb.net/index.php/Using_eclipse_hotdeploy
+
+NetBeans:
+	Issue list for scala plugin:
+		http://www.netbeans.org/issues/buglist.cgi?Submit+query=Submit+query&component=languages&subcomponent=scala&issue_status=NEW&issue_status=STARTED&issue_status=REOPENED&email1=&emailtype1=exact&emailassigned_to1=1&email2=&emailtype2=exact&emailreporter2=1&issueidtype=include&issue_id=&changedin=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&short_desc=&short_desc_type=substring&long_desc=&long_desc_type=substring&issue_file_loc=&issue_file_loc_type=substring&status_whiteboard=&status_whiteboard_type=substring&keywords=&keywords_type=anytokens&field0-0-0=noop&type0-0-0=noop&value0-0-0=&cmdtype=doit&order=Issue+Number
+	Compile on Save:
+		http://www.troymaxventures.com/2009/05/rad-w-tapestry-5-netbeans-67-maven-and.html
+
+ANTLR:
+	http://www.math.ufl.edu/help/matlab-tutorial/matlab-tutorial.html (list of Matlab syntax)
+	http://www.mathworks.com/access/helpdesk/help/pdf_doc/matlab/getstart.pdf (good list of commands and expected responses)
+Math libraries for java:
+	http://jscl-meditor.sourceforge.net (page also has links to other interesting math libraries)
+	http://jscience.org
+	http://www.ee.ucl.ac.uk/~mflanaga/java/ComplexMatrix.html (also has a PhasorMatrix)
+
+LIFT NOTES
+	Views and Templates:
+		The question is: how to handle answers to questions?  Answers are not contained in the question XML.  To use Lift's form features, the input boxes for the answers need to be part of a template.  Other things like scores, syntax checker info, and solutions could also be handled via lift.  But for all that to work, they need to be present in a template.  So we need to generate the template dynamically.
+
+JPA notation for scala classes:
+	http://gist.github.com/98561
+newest datanucleus-enchancer
+	https://sourceforge.net/project/showfiles.php?group_id=222750&package_id=270301
+instructions to get a simple lift application running on GAE
+	http://groups.google.com/group/liftweb/browse_thread/thread/8193eb25e5a8b505
+scala-xml-and-gae (video with notes)
+	http://www.slideshare.net/markryall/scala-xml-and-gae
+scala-lift-eclipse projects:
+	http://lampsvn.epfl.ch/trac/scala/wiki/ScalaEclipseLift
+good math expressions using css:
+	http://www.geocities.com/csssite/math.xml
+	http://www.myphysicslab.com/web_math.html
+	http://www.cs.tut.fi/~jkorpela/math/
+
+Electronics:
+	http://www.stanford.edu/~boyd/ee102/ (see particularly lecture 7 on laplace and matricies for systems analysis)
+	lec8 of mattuck's lecture apparently has something about RC circuits
+Site with sample EE problems:
+	http://openbookproject.net/books/socratic/index.html
+	http://en.wikipedia.org/wiki/RC_circuit
+	http://en.wikipedia.org/wiki/Nondimensionalization#First-order_series_RC_circuit
+	http://en.wikipedia.org/wiki/RLC_circuit
+	http://www.vocw.edu.vn/content/m11128/latest/ (RC and RL stuff, seems interesting -- other good material on the site too)
+
+Graphics:
+	For konqueror, have CircuitPainter return an <object> with embedded SVG
+	gwt-chronoscope
+	http://code.google.com/p/tatami/
+	http://softwareas.com/inline-svg
+	https://developer.mozilla.org/en/drawing_graphics_with_canvas
+	http://forge.novell.com/modules/xfmod/project/?xforms-explorer
+	http://code.google.com/p/explorercanvas/
+	http://intertwingly.net/blog/2007/05/04/Inline-SVG-in-MSIE
+	http://intertwingly.net/blog/2006/12/05/HOWTO-Embed-MathML-and-SVG-into-HTML4
+*	http://blog.pothoven.net/2006/10/cross-browser-inline-svg-solved.html
+	http://www.savarese.com/software/svgplugin/ (Gecko SVG plugin for IE)
+	http://www.examotion.com/ (Renesis SVG plugin for IE)
+	
+Profiling:
+	http://eclipse.org/tptp/
+
+How to Detect Browser Type using GWT
+	http://yekmer.blogspot.com/2008/08/how-to-detect-browser-type-using-gwt.html
+
+THOUGHTS ABOUT SHORTHAND FOR CIRCUITS:
+	a--R1---+-------b
+	|		|		|
+	E		R2		R3
+	|		|		|
+	+-------c-------+
+
+	a--R1---+-------b
+	E		R2		R3
+	+-------c-------+
+
+	a-R1	+-		b
+	E		R2		R3
+	+-		c-		+
+
+	a-R1+b
+	E R2 R3
+	+c+
+
+-----------------
+ZC = 1/(j*w*C)
+va = V
+ZCR = ZC + R
+vb = va * ZC / ZCR
+iC = vb / ZC
+vab = va - vb
+
+
+iC = vb / ZC
+	(vb) / (ZC)
+	(va * ZC / ZCR) / (1/(j*w*C))
+	(V * (1/(j*w*C)) / (ZC + R)) / (1/(j*w*C))
+	(V * (1/(j*w*C)) / ((1/(j*w*C)) + R)) / (1/(j*w*C))
+	
+	V / (j*w*C) / (1/(j*w*C) + R) * (j*w*C)
+	V / (1/(j*w*C) + R)
+	
+	
+	(vb) / (ZC)
+sub	(va * ZC / ZCR) / (1/(j*w*C))
+sim	(va * ZC / ZCR) / (1 / j / w / C)
+	va * ZC / ZCR / 1 * j * w * C
+	va * ZC / ZCR * j * w * C
+	va * ZC * j * w * C / ZCR
+sub	V * (1/(j*w*C)) * j * w * C / (ZC + R)
+sim	V * (1 / j / w / C) * j * w * C / (ZC + R)
+	V * 1 / j / w / C * j * w * C / (ZC + R)
+	V / (ZC + R)
+sub	V / (1/(j*w*C) + R)
+	V / (1 / j / w / C + R)
+pty	V / (1/(j*w * C) + R)
+

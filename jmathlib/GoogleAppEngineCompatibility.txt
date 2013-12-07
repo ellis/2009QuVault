@@ -1,0 +1,17 @@
+Remove these files/directories:
+      src/jmathlib/tools
+      src/jmathlib/toolbox/jmathlib/system/update.java
+      src/jmathlib/toolbox/jmathlib/system/debug.java
+      src/jmathlib/toolbox/jmathlib/system/createfunctionslist.java
+      src/jmathlib/toolbox/jmathlib/graphics
+      src/jmathlib/toolbox/jmathlib/ui
+      src/jmathlib/toolbox/io/csvwrite.java
+      src/jmathlib/toolbox/general/kbhit.java
+      src/jmathlib/toolbox/general/beep.java
+      src/jmathlib/core/graphics
+      src/jmathlib/ui/servlet
+      src/jmathlib/ui/applet
+      src/jmathlib/ui/swing
+      src/jmathlib/ui/common
+      src/jmathlib/ui/awt
+      src/jmathlibtests

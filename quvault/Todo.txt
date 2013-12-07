@@ -1,0 +1,147 @@
+RELEASE 0.1: Very basic functionality
+	- select from lists of pre-existing problems and problem sets
+	- answer and score the questions
+	- reasonable comprehensive set of questions
+	QUESTION CONFIGURATION:
+		- set parameters for questions
+	ANSWER ENTRY TYPES:
+		- arithmetic
+		- complex impedance
+		- linear algebra (matricies for solving circuits via KCL or MDA)
+		- norton and thevenin equivalent circuits
+		- diffeq
+		- multiple choice
+		- bode plot questions
+	LIBRARIES:
+		- network
+		- network painter
+		- parser/mathlib
+	WORK FUNCTIONS:
+		- syntax check
+		- score work sheet
+		- show solutions
+	FINALIZE:
+		- source code documentation
+		- create project webpage (on gitorius?)
+		- create welcome page and help pages
+		- unit tests
+	BIGGEST UNKNOWNS:
+		- mathlib matricies and functions
+		- linear algebra problems (nodal analysis etc)
+		- handling diffeq problems
+		- norton and thevenin equivalent circuits
+		- bode plot graphs
+		- generating random circuits
+		- multiple-choice
+		- fill-in-the-blank
+		- implementing problem sets
+		- tutorial/walkthrough pages and videos
+
+Next steps:
+1	VaultServer: get list of QuParamSpecs for config page
+2	rename QuContainerSnippet => QuSnippet
+3	question_config: add HTML for <fieldset> etc for the config form
+4	QuSnippet: render QuParamSpecs using fieldset/field XHTML structure in question_config.html
+	question_config: handle buttons
+	question_view: render buttons
+	question_view: handle buttons
+	external redirect to ThreeResistorCircuit/ if user goes to ThreeResistorCircuit?
+	network:
+		if there is an element named "Vi", create transfer function variables too
+		method to put differential equations into standard form?
+		simplify the current divider rule: should be: iA = iABC * ZABC / ZA
+	parser: create a parser to support differential equations
+		R*C*vC' - vC = V
+	RCCircuit:
+6		provide the XHTML forms of displayed variables
+7		vartable: w, HR, HC, i
+		add HR and HC questions
+		differential equation (vC')
+8		hide nodes "a" and "b" on the network graph
+	server:
+		how to score differential equations?
+			evaluate both sides, subtract them, and see if they are equal to the zero-equation produced by Network given a constant factor
+5	networkpainter: means to draw ground in the middle of a wire
+	VRC circuit:
+		source = DC|sinusoidal|input
+		analysis = diffeq, phasors, laplace
+		DC:
+			multiple choice: choose graph representing curve of vC/vR
+			vC(t) = V*(1 - exp(-tau*t))
+			vC/dt = ? (or integral?)
+			iC/dt = ?
+			dvC = ?
+			diC = ?
+			tau = ?
+		sinusoidal:
+			question 1: phasor calculations (with possibly lots of variables)
+			question 2: phasor equations (single expressions for HC, HR, etc)
+			HC =
+			HR =
+			cutoff = ?
+			bode plots
+			multiple choice: if C is increased/decreased, what will be the impact on w0?
+
+	parser:
+		functions (see http://www.antlr.org/wiki/display/ANTLR3/Simple+tree-based+interpeter)
+			exp
+			sqrt
+			pow
+			ln?
+			log?
+			log10
+			log2
+		matricies
+		matrix range references (i.e., let a single row of an array be set)
+		let list of variables be set
+
+	Series/Parallel resistor/capacitor/inductor/voltage/current
+	Voltage divider rule
+	Current divider rule
+	KVL
+	KCL
+	Ohm's law
+	Nodal analysis:
+		write the equations
+		create the matrix
+	Branch analysis
+		write the equations
+	Equivalent circuits:
+		randomly generate a circuit with certain restrictions
+		norton equivalent: IN = ?, RN = ?
+		thevenin equivalent: Vth = ?, Rth = ?
+	Superposition principle
+	Network analysis practice (generate random networks for practicing network analysis)
+	Complex impedance:
+		voltage divider rule
+		current divider rule
+	Bode Plots:
+		show bode plots and ask things like:
+			cutoff(s)?
+			is this a high-pass or low-pass?
+			what is the order of the network (given that only RLC elements are used)?
+			does this plot come from an RL, an RC, etc, network?
+	RC/RL circuits:
+	RLC practice (all possible 3-element RLC circuits, including letting the L or C be non-ideal)
+		system of differential equations (vc', iL')
+	
+	try to replace config View with html+snippets?
+	"view/standard/questions/..." => "questions/standard/..." ?
+	"view/standard/questions/PT_ThreeResistorCircuit/work?..." => "qs/ee/ThreeResistorCircuit/0-asd3r29asd3r29/work" ?
+	
+	vault: problemParamsCleanup action
+	vault: probset templates
+	vault: probsets
+	network: simplify equations where direct substitution is possible.  i.e, if iR1 = I, then iR2 = iR2 => iR2 = I
+		but more complicated: if iR2 = -I, then iR3 = iR1 + iR2 => iR3 = iR1 - I
+		DON'T DO THIS.  I decided against it.  We might as well let the user see how the computer systematically reaches a solution.
+
+Network Painter:
+	implement "grid"
+	rename *-label => label-* (e.g. left-label => label-left)
+	make left/right/top/bottom absolute
+	implement rel-left/rel-right/rel-top/rbottom for relative positions
+	<grid>
+		<resistor row="1" segment="1" left-label="R1"/>
+		...
+	</grid>

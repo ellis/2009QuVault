@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>probsets.html</welcome-file>
+  </welcome-file-list>
+  
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>viewdataServiceImpl</servlet-name>
+    <servlet-class>net.ellisw.quvault.server.ViewdataServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>viewdataServiceImpl</servlet-name>
+    <url-pattern>/quvault/viewdata</url-pattern>
+  </servlet-mapping>
+
+	<servlet>
+		<servlet-name>importLocalVault</servlet-name>
+		<servlet-class>net.ellisw.quvault.server.html.ImportLocalVaultServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>importLocalVault</servlet-name>
+		<url-pattern>/admin/importLocalVault</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>problemList</servlet-name>
+		<servlet-class>net.ellisw.quvault.server.html.ProblemListServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>problemList</servlet-name>
+		<url-pattern>/html/problemList</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>problem</servlet-name>
+		<servlet-class>net.ellisw.quvault.server.html.ProblemServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>problem</servlet-name>
+		<url-pattern>/html/problem/*</url-pattern>
+	</servlet-mapping>
+
+</web-app>

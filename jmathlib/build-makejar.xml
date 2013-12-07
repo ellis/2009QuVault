@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="core.makejar" default="makejar" basedir=".">
+
+	<target name ="makejar" description="Create a jar">
+		<jar basedir="bin" index="true"
+			jarfile="../server/war/WEB-INF/lib/quvault-jmathlib.jar"
+			includes="**/*.class,**/*.m,*" 
+			excludes="**/.svn"
+		/>
+	</target>
+
+</project>

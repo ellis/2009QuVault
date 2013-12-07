@@ -1,0 +1,14 @@
+<lift:surround with="default" at="content">
+  <head>
+    <style type="text/css">
+    textarea.textareawide { width: 100% }
+    </style>
+  </head>
+  <div>Question XML</div>
+  <lift:QuEdit.getXml form="put">
+    <qu:source/><br/>
+    <qu:submit/>
+  </lift:QuEdit.getXml>
+  <hr/>
+  <lift:QuView.renderNoAnswers/>
+</lift:surround>

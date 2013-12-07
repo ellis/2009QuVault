@@ -1,0 +1,45 @@
+<lift:surround with="default" at="content">
+	<head>
+		<style type="text/css">
+			#btnSubmit {
+				background-color: #ffdc73;
+				border: 1px solid black;
+				padding: .5em 0; 
+				text-align: center
+			}
+			
+			#question { margin-left: 2em }
+			
+			fieldset {
+				background-color: #ffdc73; 
+				margin: 0 0 .5em 0;
+				font-size: 90%
+			}
+			
+			legend {
+				background: #ffad40;
+				border: 1px solid #781351;
+				color: #603000;
+				padding: 2px 6px;
+				font-weight: bold
+			}
+			
+			.checklist {
+			    border: 1px solid #ccc;
+			    list-style: none;
+			    height: 9em;
+			    overflow: auto;
+			    width: auto;
+			}
+			.checklist, .checklist li { margin: 0; padding: 0; }
+			.checklist label {
+			    display: block;
+			    padding-left: 25px;
+			    text-indent: -25px;
+			}
+			.checklist label:hover { background: #777; color: #fff; }
+		</style>
+	</head>
+
+	<lift:bind name="content" />
+</lift:surround>

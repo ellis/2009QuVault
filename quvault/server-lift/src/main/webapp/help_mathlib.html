@@ -1,0 +1,36 @@
+<lift:surround with="help_popup" at="content">
+	<head>
+		<style type="text/css">
+			td.code { border: 1px solid gray; font-family: monospace }
+		</style> 
+	</head>
+	
+	<p>Some questions in QuVault require you to write your answers in Matlab-style.
+	Here are some important examples:</p>
+	
+	<h3>Operators</h3>
+	<table>
+		<tr><td class="code">x = 100</td><td>Set the value of the variable <i>x</i></td></tr> 
+		<tr><td class="code">y = x + 10</td><td>Addition</td></tr> 
+		<tr><td class="code">y = x - 10</td><td>Subtraction</td></tr> 
+		<tr><td class="code">y = x * 2</td><td>Multiplication</td></tr> 
+		<tr><td class="code">y = x / 2</td><td>Division</td></tr> 
+		<tr><td class="code">y = x^2</td><td>Powers</td></tr> 
+		<tr><td class="code">y = sqrt(x)</td><td>Square root</td></tr>
+		<tr><td class="code">y = 1/(1/4 + x^2.5) - 1</td><td>A more complicated expression using parentheses</td></tr>
+	</table>
+	
+	<h3>Multiple equations</h3>
+	<p>Sometimes you'll need to enter in more than one equation.
+	Equations can be separated either by placing them on separate lines, or you can
+	separate equations with a semicolon.</p> 
+	<table>
+		<tr><td class="code">x = 100<br/>y = sqrt(x)</td><td>Multiple assignments separated by ENTER</td></tr> 
+		<tr><td class="code">x = 1; y = 2</td><td>Multiple assignments separated by a semicolon</td></tr> 
+	</table>
+	
+	<h3>Checking your syntax</h3>
+	<p>You can check whether you wrote valid matlab-style code by clicking the [Validate] button at the
+	bottom of the work pages.</p>
+
+</lift:surround>

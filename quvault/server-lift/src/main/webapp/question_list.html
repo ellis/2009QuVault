@@ -1,0 +1,21 @@
+<lift:surround with="default" at="content">
+	<p>
+	Clicking on one of the questions below will take you to its configuration page.
+	</p>
+	<lift:QuestionListSnippet eager_eval="true">
+		<table>
+			<thead>
+				<tr>
+					<th style="text-align: left">Title</th>
+				</tr>
+			</thead>
+			<tbody id="table_items">
+				<qu:table>
+					<qu:table_item>
+						<tr><td><item:title/></td></tr>
+					</qu:table_item>
+				</qu:table>
+			</tbody>
+		</table>
+	</lift:QuestionListSnippet>
+</lift:surround>
